@@ -89,6 +89,7 @@ class TruckTracker(QMainWindow):
         self.tracking_thread.start()
 
     def pickup_check(self, truck_type, shipper_id, city_check):
+        
         options = webdriver.ChromeOptions()
         options.add_argument('--ignore-certificate-errors')
         options.add_argument('--ignore-ssl-errors')
@@ -98,6 +99,7 @@ class TruckTracker(QMainWindow):
         options.add_argument('--disable-gpu')
         
         beep_count = 0
+        attempts = 0
 
         driver = webdriver.Chrome(options=options)
         wait = WebDriverWait(driver, 60)
@@ -167,7 +169,7 @@ class TruckTracker(QMainWindow):
                             # break
                     # print(f'The {truck_type.upper()} truck is expected {expectedTime.text}')
                         # Include update of the self.status_label with truck expected time like:
-                    if expected_time_strip_today < datetime.now() and f'{city_check}' in current_location.text :
+                    if expected_time_strip_today < datetime.now() and f'{city_check}' in current_location.text:
                         self.status_label.setText(f'The {truck_type} truck has been delivered.')
                         self.location_label.setText('')
                         self.status_bar.showMessage("")
@@ -192,8 +194,10 @@ class TruckTracker(QMainWindow):
                 if not keep_running:
                     break    
         except TimeoutException:
-            self.status_label.setText("Could not retrieve expected time. Please click Start Tracking again.")
-            driver.quit()
+            if(attempts > 3):
+                self.status_label.setText("Could not retrieve expected time. Please click Start Tracking again.")
+                driver.quit()
+            attempts +=1
         # driver.quit()
 
 if __name__ == "__main__":
