@@ -61,7 +61,7 @@ class TruckTracker(QMainWindow):
         self.status_label = QLabel("Status: Waiting for input...", self)
         layout.addWidget(self.status_label)
 
-        # Current location display
+        # Last location display
         self.location_label = QLabel("Status: Waiting for input...", self)
         layout.addWidget(self.location_label)
         
@@ -113,8 +113,9 @@ class TruckTracker(QMainWindow):
             while keep_running == True:
                 count = 1
                 try:
-                    current_location = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/span')))
-                    self.location_label.setText(f'Current Location: {current_location.text}')
+                    last_location = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/span')))
+                    last_location_time = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/div')))
+                    self.location_label.setText(f'Last Location: {last_location.text}\nLast Updated: {last_location_time.text[13:22]}')
                 except TimeoutException:
                     self.location_label.setText('')
                 city = wait.until(EC.visibility_of_element_located((By.XPATH,f'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[2]/div[2]/div/ol/li[{count}]/div[3]')))
@@ -169,7 +170,7 @@ class TruckTracker(QMainWindow):
                             # break
                     # print(f'The {truck_type.upper()} truck is expected {expectedTime.text}')
                         # Include update of the self.status_label with truck expected time like:
-                    if expected_time_strip_today < datetime.now() and f'{city_check}' in current_location.text:
+                    if expected_time_strip_today < datetime.now() and f'{city_check}' in last_location.text:
                         self.status_label.setText(f'The {truck_type} truck has been delivered.')
                         self.location_label.setText('')
                         self.status_bar.showMessage("")
@@ -178,8 +179,8 @@ class TruckTracker(QMainWindow):
                         break
                     expected_time = expectedTime.text
                     self.status_label.setText(f'The {truck_type} truck is expected {expected_time}')
-                    current_location = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/span')))
-                    self.location_label.setText(f'Current Location: {current_location.text}')
+                    last_location = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/span')))
+                    self.location_label.setText(f'Last Location: {last_location.text}')
                     if keep_running == True:
                         for i in range(60, 0, -1):
                             t.sleep(1)
