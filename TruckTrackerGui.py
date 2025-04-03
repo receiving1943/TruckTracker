@@ -180,7 +180,8 @@ class TruckTracker(QMainWindow):
                     expected_time = expectedTime.text
                     self.status_label.setText(f'The {truck_type} truck is expected {expected_time}')
                     last_location = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/span')))
-                    self.location_label.setText(f'Last Location: {last_location.text}')
+                    last_location_time = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/div')))
+                    self.location_label.setText(f'Last Location: {last_location.text}\nLast Updated: {last_location_time.text}')
                     if keep_running == True:
                         for i in range(60, 0, -1):
                             t.sleep(1)
