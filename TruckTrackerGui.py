@@ -115,7 +115,7 @@ class TruckTracker(QMainWindow):
                 try:
                     last_location = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/span')))
                     last_location_time = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/div')))
-                    self.location_label.setText(f'Last Location: {last_location.text}\nLast Updated: {last_location_time.text[13:22]}')
+                    self.location_label.setText(f'Last Location: {last_location.text}\nLast Updated: {last_location_time.text}')
                 except TimeoutException:
                     self.location_label.setText('')
                 city = wait.until(EC.visibility_of_element_located((By.XPATH,f'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[2]/div[2]/div/ol/li[{count}]/div[3]')))
