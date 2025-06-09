@@ -9,6 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import TimeoutException
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStatusBar, QVBoxLayout, QWidget, QLineEdit, QPushButton, QHBoxLayout, QSizePolicy
+from PyQt5.QtGui import QIcon
 from threading import Thread
 import winsound as ws
 from datetime import datetime, date, time
@@ -21,8 +22,9 @@ class TruckTracker(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        self.setWindowTitle("Truck Tracker")
+        self.setWindowTitle('Truck Tracker')
         self.setGeometry(100, 100, 400, 200)
+        self.setWindowIcon(QIcon('truck.ico'))
 
         # Layouts
         layout = QVBoxLayout()
@@ -109,7 +111,7 @@ class TruckTracker(QMainWindow):
         try:
                    
             keep_running = True
-            # def pickUpCheck(shipID): # Function to check if truck has been picked up and output if it has been or not. If it has outputs the expected time.
+            # def pickUpCheck(shipID): # Function to check if truck has been picked up and output if it has been or not. If it has, outputs the expected time.
             while keep_running == True:
                 count = 1
                 try:
@@ -139,11 +141,11 @@ class TruckTracker(QMainWindow):
                         expecPic = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[2]/div[2]/div/ol/li[1]/div[4]')))
                 while 'Estimated Pickup' in expecPic.text and keep_running:
                     now = datetime.now()
-                    curr_time = now.strftime("%I:%M %p")
-                    self.status_label.setText(f"{truck_type} truck not picked up as of {curr_time}. Checking again in 5 minutes.")
+                    curr_time = now.strftime('%I:%M %p')
+                    self.status_label.setText(f'{truck_type} truck not picked up as of {curr_time}. Checking again in 5 minutes.')
                     for i in range(300, 0, -1):
                         t.sleep(1)
-                        self.status_bar.showMessage(f"Time until next check: {i} seconds")
+                        self.status_bar.showMessage(f'Time until next check: {i} seconds')
                         if i == 1:
                             driver.refresh()
                     try:
@@ -158,8 +160,8 @@ class TruckTracker(QMainWindow):
                     except TimeoutException:
                         expectedTime = wait.until(EC.visibility_of_element_located((By.XPATH,f'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[2]/div[2]/div/ol/li[{count}]/div[4]')))
                     now = datetime.now()
-                    curr_time = now.strftime("%I:%M %p")
-                    expected_time_strip = datetime.strptime(expectedTime.text[3:], "%I:%M %p")
+                    curr_time = now.strftime('%I:%M %p')
+                    expected_time_strip = datetime.strptime(expectedTime.text[3:], '%I:%M %p')
                     expected_time_strip_today = datetime.combine(date.today(), expected_time_strip.time())
                     if abs((expected_time_strip_today - datetime.now()).total_seconds()) <= 300:  # 300 seconds = 5 minutes
                         if(beep_count ==0):
@@ -173,7 +175,7 @@ class TruckTracker(QMainWindow):
                     if expected_time_strip_today < datetime.now() and f'{city_check}' in last_location.text:
                         self.status_label.setText(f'The {truck_type} truck has been delivered.')
                         self.location_label.setText('')
-                        self.status_bar.showMessage("")
+                        self.status_bar.showMessage('')
                         driver.quit()
                         keep_running = False
                         break
@@ -185,7 +187,7 @@ class TruckTracker(QMainWindow):
                     if keep_running == True:
                         for i in range(60, 0, -1):
                             t.sleep(1)
-                            self.status_bar.showMessage(f"Time until next check: {i} seconds")
+                            self.status_bar.showMessage(f'Time until next check: {i} seconds')
                             if i == 1:
                                 driver.refresh()
                             try:
@@ -196,8 +198,8 @@ class TruckTracker(QMainWindow):
                 if not keep_running:
                     break    
         except TimeoutException:
-            if(attempts > 3):
-                self.status_label.setText("Could not retrieve expected time. Please click Start Tracking again.")
+            if(attempts > 2):
+                self.status_label.setText('Could not retrieve expected time. Please click Start Tracking again.')
                 driver.quit()
             attempts +=1
         # driver.quit()
