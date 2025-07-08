@@ -26,6 +26,8 @@ Ensure you have the following dependencies installed:
 - **Chrome WebDriver** - Download from [here](https://sites.google.com/chromium.org/driver/) compatible with your Chrome version.
 - **winsound** (Windows only) - For notification sounds.
 
+---
+
 ## Installation
 1. Clone or download this repository.
 2. Install the required Python packages:
