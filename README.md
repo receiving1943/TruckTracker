@@ -33,20 +33,28 @@ Ensure you have the following dependencies installed:
 ```bash
 pip install selenium pyqt5
 ```
-Download the appropriate ChromeDriver for your Chrome version from here.
-Place chromedriver.exe in the same directory as your script or ensure it's accessible via your system PATH.
-Ensure the truck.ico icon file is in the same directory, or update the icon path in the script.
-Usage
-Run the script with Python:
+3. Download the appropriate ChromeDriver for your Chrome version from here.
+4. Place chromedriver.exe in the same directory as your script or ensure it's accessible via your system PATH.
+5. Ensure the truck.ico icon file is in the same directory, or update the icon path in the script.
 
-CopyRun
+--- 
+
+## Usage
+Run the script with Python:
+```bash
 python your_script_name.py
+```
 This will open the GUI window. Enter the Truck Type, City, and Shipper ID, then click Start Tracking. The application will begin monitoring the truck's status, updating the display and alerting you as the truck approaches its expected time.
 
-Notes
+---
+
+## Notes
 The script uses headless Chrome; ensure ChromeDriver matches your Chrome browser version.
 The beeping notification uses winsound and works on Windows. For other OS, modify the beep functionality accordingly.
 The tracking loop performs checks every 5 minutes, with more frequent updates (every minute) during active monitoring.
 Make sure to have the truck.ico icon file in the script directory or update the icon path.
-License
+
+---
+
+## License
 This project is provided as-is. Feel free to customize, improve, or adapt it to your needs.
