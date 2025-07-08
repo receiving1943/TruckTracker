@@ -44,7 +44,7 @@ pip install selenium pyqt5
 ## Usage
 Run the script with Python:
 ```bash
-python your_script_name.py
+python TruckTrackerGUI.py
 ```
 This will open the GUI window. Enter the Truck Type, City, and Shipper ID, then click Start Tracking. The application will begin monitoring the truck's status, updating the display and alerting you as the truck approaches its expected time.
 
