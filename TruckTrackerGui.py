@@ -14,7 +14,27 @@ from threading import Thread
 import winsound as ws
 from datetime import datetime, date, time
 
-
+def find_icon():
+    # Define your file name
+    filename = 'truck.ico'
+    
+    # Define your locations
+    location1 = '.'
+    location2 = '_internal/'
+    
+    # Initialize the string variable
+    location = ''
+    
+    # Check if the file exists in the first location
+    if os.path.isfile(os.path.join(location1, filename)):
+        location = os.path.join(location1, filename)
+    # Check if the file exists in the second location
+    elif os.path.isfile(os.path.join(location2, filename)):
+        location = os.path.join(location2, filename)
+    else:
+        location = '.'
+    
+    return(location)
 
 class TruckTracker(QMainWindow):
     def __init__(self):
@@ -22,9 +42,10 @@ class TruckTracker(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
+        truck_icon = find_icon()
         self.setWindowTitle('Truck Tracker')
         self.setGeometry(100, 100, 400, 200)
-        self.setWindowIcon(QIcon('truck.ico'))
+        self.setWindowIcon(QIcon(truck_icon))
 
         # Layouts
         layout = QVBoxLayout()
@@ -35,21 +56,21 @@ class TruckTracker(QMainWindow):
 
         # Input for Truck Type
         self.truck_type_input = QLineEdit(self)
-        self.truck_type_input.setPlaceholderText("Please Enter Type of Truck")
+        self.truck_type_input.setPlaceholderText('Please Enter Type of Truck')
         hlayout1.addWidget(self.truck_type_input)
         
         # Input for City
         self.city_input = QLineEdit(self)
-        self.city_input.setPlaceholderText("Please Enter City")
+        self.city_input.setPlaceholderText('Please Enter City')
         hlayout1.addWidget(self.city_input)
 
         # Input for Shipper ID
         self.shipper_id_input = QLineEdit(self)
-        self.shipper_id_input.setPlaceholderText("Please Enter Shipper ID")
+        self.shipper_id_input.setPlaceholderText('Please Enter Shipper ID')
         hlayout2.addWidget(self.shipper_id_input)
 
         # Button to start tracking
-        self.track_button = QPushButton("Start Tracking", self)
+        self.track_button = QPushButton('Start Tracking', self)
         self.track_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.track_button.setMinimumWidth(160)  # Set to minimum desired width, adjust as necessary
         
@@ -60,11 +81,11 @@ class TruckTracker(QMainWindow):
         hlayout2.addWidget(self.track_button)
 
         # Status display
-        self.status_label = QLabel("Status: Waiting for input...", self)
+        self.status_label = QLabel('Status: Waiting for input...', self)
         layout.addWidget(self.status_label)
 
         # Last location display
-        self.location_label = QLabel("Status: Waiting for input...", self)
+        self.location_label = QLabel('Status: Waiting for input...', self)
         layout.addWidget(self.location_label)
         
         # Setup status bar
@@ -82,16 +103,17 @@ class TruckTracker(QMainWindow):
         city_check = self.city_input.text()
 
         if not truck_type or not shipper_id or not city_check:
-            self.status_label.setText("Please enter Truck Type, Shipper ID, and City.")
+            self.status_label.setText('Please enter Truck Type, Shipper ID, and City.')
             return
 
-        self.status_label.setText("Tracking started...")
+        self.status_label.setText('Tracking started...')
         self.location_label.setText('Finding Location...')
         self.tracking_thread = Thread(target=self.pickup_check, args=(truck_type, shipper_id, city_check))
         self.tracking_thread.start()
 
     def pickup_check(self, truck_type, shipper_id, city_check):
-        
+    # Function to check if truck has been picked up and output if it has been or not. If it has, outputs the expected time.
+
         options = webdriver.ChromeOptions()
         options.add_argument('--ignore-certificate-errors')
         options.add_argument('--ignore-ssl-errors')
@@ -111,7 +133,6 @@ class TruckTracker(QMainWindow):
         try:
                    
             keep_running = True
-            # def pickUpCheck(shipID): # Function to check if truck has been picked up and output if it has been or not. If it has, outputs the expected time.
             while keep_running == True:
                 count = 1
                 try:
@@ -125,14 +146,10 @@ class TruckTracker(QMainWindow):
                     city = wait.until(EC.visibility_of_element_located((By.XPATH,f'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[2]/div[2]/div/ol/li[{count}]/div[2]')))
                 while f'{city_check}' not in city.text:
                     count +=1
-                    # print(count)
                     city = wait.until(EC.visibility_of_element_located((By.XPATH,f'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[2]/div[2]/div/ol/li[{count}]/div[3]')))
                     if 'Estimated delivery' in city.text or 'Completed' in city.text:
-                        # print(city.text,' prev')
                         city = wait.until(EC.visibility_of_element_located((By.XPATH,f'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[2]/div[2]/div/ol/li[{count}]/div[2]')))
-                        # print(city.text, ' post')
                 self.status_label.setText(f'Checking if picked up...')
-                # print(city.text)
                 try:
                     expecPic = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[2]/div[2]/div/ol/li[1]/div[4]')))
                 except TimeoutException:
@@ -169,9 +186,6 @@ class TruckTracker(QMainWindow):
                             dur=1000
                             ws.Beep(freq,dur)
                             beep_count +=1
-                            # break
-                    # print(f'The {truck_type.upper()} truck is expected {expectedTime.text}')
-                        # Include update of the self.status_label with truck expected time like:
                     if expected_time_strip_today < datetime.now() and f'{city_check}' in last_location.text:
                         self.status_label.setText(f'The {truck_type} truck has been delivered.')
                         self.location_label.setText('')
@@ -202,9 +216,8 @@ class TruckTracker(QMainWindow):
                 self.status_label.setText('Could not retrieve expected time. Please click Start Tracking again.')
                 driver.quit()
             attempts +=1
-        # driver.quit()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = QApplication(sys.argv)
     tracker = TruckTracker()
     tracker.show()
