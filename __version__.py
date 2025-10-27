@@ -1,7 +1,7 @@
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(1, 0, 11, 0),
-    prodvers=(1, 0, 11, 0),
+    filevers=(1, 0, 12, 0),
+    prodvers=(1, 0, 12, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x4,
@@ -16,12 +16,12 @@ VSVersionInfo(
         u'040904B0',
         [StringStruct(u'CompanyName', u'The Home Depot'),
         StringStruct(u'FileDescription', u'Truck Tracker for JBHunt\xae Trucks'),
-        StringStruct(u'FileVersion', u'1.0.11'),
+        StringStruct(u'FileVersion', u'1.0.12'),
         StringStruct(u'InternalName', u'Truck Tracker'),
         StringStruct(u'LegalCopyright', u'\xa9 The Home Depot. All rights reserved.'),
         StringStruct(u'OriginalFilename', u'TruckTrackerGUI.exe'),
         StringStruct(u'ProductName', u'Truck Tracker for JBHunt\xae Trucks'),
-        StringStruct(u'ProductVersion', u'1.0.11')])
+        StringStruct(u'ProductVersion', u'1.0.12')])
       ]), 
     VarFileInfo([VarStruct(u'Translation', [1033, 1200])])
   ]

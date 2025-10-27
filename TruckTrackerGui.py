@@ -118,9 +118,11 @@ class TruckTracker(QMainWindow):
         options.add_argument('--ignore-certificate-errors')
         options.add_argument('--ignore-ssl-errors')
         options.add_argument('--headless')
-        options.add_argument('--log-level=1')
+        options.add_argument('--log-level=3')
         options.add_argument('--incognito')
         options.add_argument('--disable-gpu')
+        options.add_argument("--disable-extensions")
+
         
         beep_count = 0
         attempts = 0
@@ -135,12 +137,27 @@ class TruckTracker(QMainWindow):
             keep_running = True
             while keep_running == True:
                 count = 1
+                while True:
+                    try:
+                        check_if_found = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/h3')))
+                        if "Not Found" in check_if_found.text:
+                            self.status_label.setText(f'{check_if_found.text}. Checking again in 5 minutes.')
+                            for i in range(300, 0, -1):
+                                t.sleep(1)
+                                self.status_bar.showMessage(f'Time until next check: {i} seconds')
+                                if i == 1:
+                                    driver.refresh()
+                        else:
+                            break
+                    except TimeoutException:
+                        continue
+                        
                 try:
                     last_location = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/span')))
                     last_location_time = wait.until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[1]/div[2]/div/div[2]/div[2]/div')))
                     self.location_label.setText(f'Last Location: {last_location.text}\nLast Updated: {last_location_time.text}')
                 except TimeoutException:
-                    self.location_label.setText('')
+                    self.location_label.setText('Last Location: No Location Found.')
                 city = wait.until(EC.visibility_of_element_located((By.XPATH,f'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[2]/div[2]/div/ol/li[{count}]/div[3]')))
                 if 'Estimated delivery' in city.text:
                     city = wait.until(EC.visibility_of_element_located((By.XPATH,f'/html/body/div[2]/div[1]/div[3]/div/div[1]/div[2]/div[2]/div/ol/li[{count}]/div[2]')))
